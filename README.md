@@ -5,7 +5,7 @@
 ![Gymnasium](https://img.shields.io/badge/Environment-Gymnasium-lightgrey)
 ![Pygame](https://img.shields.io/badge/Graphics-Pygame-yellow)
 
-> An experimental thesis exploring how the interplay between **Observation Spaces** (Static vs. Kinematic/Egocentric) and **Reward Shaping** (Survival Rewards vs. Time Penalties) affects the behavioral policies of Proximal Policy Optimization (PPO) agents across three distinct 2D environments.
+> An experimental thesis analyzing how Proximal Policy Optimization (PPO) learns to master 2D games of varying complexity. Through a comprehensive pipeline of 21 experiments across three environments, the project explores baseline AI behaviors and tests how modifying Neural Network Architecture, Reward Functions, and Observation Spaces ultimately dictates the agent's playstyle.
 
 ---
 
