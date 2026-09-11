@@ -14,7 +14,7 @@
 <!-- TODO: Replace the placeholder links below with your actual uploaded GIFs -->
 | Snake (Egocentric) | Flappy Bird (Kinematics) | Shooter (The Mastermind) |
 | :---: | :---: | :---: |
-| <video src="https://github.com/user-attachments/assets/73e1fdc0-c597-4bf2-8c81-75f9b64ea7c1" width="250" autoplay="autoplay" muted playsinline></video> | <img src="assets/flappy_placeholder.gif" width="250"/> | <img src="assets/shooter_placeholder.gif" width="250"/> |
+| <video src="https://github.com/user-attachments/assets/73e1fdc0-c597-4bf2-8c81-75f9b64ea7c1" width="250"></video> | <img src="assets/flappy_placeholder.gif" width="250"/> | <img src="assets/shooter_placeholder.gif" width="250"/> |
 | *Learned to maximize score without distance guidance by relying on egocentric rays.* | *Learned to calculate perfect trajectory arcs by processing vertical velocity.* | *Learned flawless kiting and dodging by reading enemy and bullet velocity vectors.* |
 
 ---
