@@ -42,13 +42,40 @@ While each environment features unique mechanics (e.g., gravity, growing hitboxe
 | **7** | **Advanced Vision & Sparse Penalties** | Kinematic / Egocentric | - Sparse / Time Penalties | Forces optimal, aggressive execution. The agent relies solely on its superior vision and the pressure of penalties to master the environment without artificial positive guidance. |
 ---
 
+## Training Results & Learning Curves
+
+The graphs below illustrate the impact of modifying the agent's observation space and reward structure. Displaying the **Evaluation Mean Reward** across the 7 experiments, it is evident that providing the agent with kinematic/egocentric vision combined with appropriate sparse penalties drastically accelerates convergence and maximizes true policy performance compared to the baseline static models.
+
+> *Note: Some experiment names within the graphs may differ slightly from the final terminology used in this repository.*
+
+<div align="center">
+
+### Snake
+<img src="assets/Graphs/Snake/evaluation_mean_reward.png" width="900" alt="Snake Learning Curve"/>
+
+### Flappy Bird
+<img src="assets/Graphs/Flappy%20Bird/evaluation_mean_reward.png" width="900" alt="Flappy Bird Learning Curve"/>
+
+### Shooter
+<img src="assets/Graphs/Shooter/evaluation_mean_reward.png" width="900" alt="Shooter Learning Curve"/>
+
+</div>
+
+---
+
 ## Repository Structure
 
 ```text
 Thesis_RL_Games/
 ├── README.md
 ├── requirements.txt
-├── assets/                       # Stores GIFs, Full Videos and TensorBoard graphs
+├── assets/
+│   ├── GIFs/                     # Gameplay animations
+│   ├── Full Videos/              # Complete evaluation runs
+│   └── Graphs/                   # TensorBoard learning curves
+|            ├── Flappy Bird/                     
+│            ├── Shooter/            
+│            └── Snake/                        
 ├── Snake/
 │   ├── train_exp1_no_penalty.py
 │   ├── ...
