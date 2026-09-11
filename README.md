@@ -1,14 +1,14 @@
-# Deep Reinforcement Learning: Reward Shaping & Kinematic Vision
+# Development of 2D Games and Design of Reinforcement Learning Agents for Autonomous Solving
 
 ![Python](https://img.shields.io/badge/Python-3.8%2B-blue)
 ![Stable Baselines3](https://img.shields.io/badge/Stable_Baselines3-PPO-orange)
 ![Gymnasium](https://img.shields.io/badge/Environment-Gymnasium-lightgrey)
 ![Pygame](https://img.shields.io/badge/Graphics-Pygame-yellow)
 
-> An experimental thesis analyzing how Proximal Policy Optimization (PPO) learns to master 2D games of varying complexity. Through a comprehensive pipeline of 21 experiments across three environments, the project explores baseline AI behaviors and tests how modifying Neural Network Architecture, Reward Functions, and Observation Spaces ultimately dictates the agent's playstyle.
+> An experimental thesis analyzing how Proximal Policy Optimization (PPO) learns to master 2D games of varying complexity. Through a comprehensive pipeline of 21 experiments across three environments, the project explores baseline AI behaviors and tests how modifying Neural Network Architecture, Reward Functions, and Observation Spaces ultimately dictates the agent's abilities to play the game.
 ---
 
-## 🎮 Gameplay Highlights
+## Gameplay Highlights
 
 | Snake | Flappy Bird | Shooter |
 | :---: | :---: | :---: |
@@ -17,7 +17,7 @@
 
 ---
 
-## 🧠 Project Overview
+## Project Overview
 
 The primary objective of this thesis is to evaluate how a Deep Reinforcement Learning algorithm—specifically Proximal Policy Optimization (PPO)—adapts to and masters completely distinct environmental mechanics. Rather than focusing on a single task, the agent is deployed across three fundamentally different 2D games to observe its baseline reactions to unique challenges:
 
@@ -26,10 +26,6 @@ The primary objective of this thesis is to evaluate how a Deep Reinforcement Lea
 *   **Top-Down Shooter:** The agent faces a highly dynamic environment with complex, high-dimensional inputs, requiring it to outmaneuver enemy AI and dodge incoming projectiles.
 
 After establishing baseline behaviors for each game, the project systematically attempts to improve the AI's performance through a rigorous **7-experiment pipeline**. By tweaking neural network architectures, reshaping reward functions (e.g., time penalties vs. survival rewards), and upgrading observation spaces (e.g., integrating kinematic velocity vectors), the thesis demonstrates exactly what it takes to push an RL agent from basic competence to optimal tactical behavior in any given environment.
-
-## 🔬 The 7-Experiment Pipeline
-
-For each environment, the agent progresses through the following structured experiments to isolate the effects of architecture, rewards, and vision:
 
 ### Experimental Methodology & The 7-Step Pipeline
 
@@ -46,7 +42,7 @@ While each environment features unique mechanics (e.g., gravity, growing hitboxe
 | **7** | **Advanced Vision & Sparse Penalties** | Kinematic / Egocentric | - Sparse / Time Penalties | Forces optimal, aggressive execution. The agent relies solely on its superior vision and the pressure of penalties to master the environment without artificial positive guidance. |
 ---
 
-## 📁 Repository Structure
+## Repository Structure
 
 ```text
 Thesis_RL_Games/
@@ -69,7 +65,7 @@ Thesis_RL_Games/
 
 ---
 
-## 🚀 Installation & Setup
+## Installation & Setup
 
 To run the environments and evaluate the trained models locally, follow these steps:
 
@@ -87,7 +83,7 @@ To run the environments and evaluate the trained models locally, follow these st
 
 ---
 
-## 🕹️ How to Evaluate Models
+## How to Evaluate Models
 
 You don't need to retrain the agents to see them in action. Each game folder contains an evaluation script that loads the pre-trained checkpoints. 
 
