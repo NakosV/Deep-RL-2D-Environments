@@ -6,42 +6,44 @@
 ![Pygame](https://img.shields.io/badge/Graphics-Pygame-yellow)
 
 > An experimental thesis analyzing how Proximal Policy Optimization (PPO) learns to master 2D games of varying complexity. Through a comprehensive pipeline of 21 experiments across three environments, the project explores baseline AI behaviors and tests how modifying Neural Network Architecture, Reward Functions, and Observation Spaces ultimately dictates the agent's playstyle.
-
 ---
 
 ## 🎮 Gameplay Highlights
 
-<!-- TODO: Replace the placeholder links below with your actual uploaded GIFs -->
-| Snake (Egocentric) | Flappy Bird (Kinematics) | Shooter (The Mastermind) |
+| Snake | Flappy Bird | Shooter |
 | :---: | :---: | :---: |
 | <video src="https://github.com/user-attachments/assets/73e1fdc0-c597-4bf2-8c81-75f9b64ea7c1" width="250"></video> | <img src="assets/flappy_placeholder.gif" width="250"/> | <img src="assets/shooter_placeholder.gif" width="250"/> |
-| *Learned to maximize score without distance guidance by relying on egocentric rays.* | *Learned to calculate perfect trajectory arcs by processing vertical velocity.* | *Learned flawless kiting and dodging by reading enemy and bullet velocity vectors.* |
+| *This result was accomplished by the egocentric vision in concert with a distance reward.* | *This result was accomplished by the kinematic vision in tandem with a positive reward.* | *This result was accomplished by the dynamic vision in unison with negative reward.* |
 
 ---
 
 ## 🧠 Project Overview
 
-The objective of this thesis is to empirically demonstrate that increasing a neural network's capacity does not solve fundamental bottlenecks caused by poor state representation. Through a rigorous **7-experiment pipeline** applied consistently across three games (Snake, Flappy Bird, Top-Down Shooter), this project investigates:
-1. **Reward Hacking:** How survival rewards create "Camper" behaviors.
-2. **Blind Rushing:** How time penalties cause suicidal behaviors when vision is limited.
-3. **Kinematic Integration:** How adding velocity vectors ($V_x, V_y$) to the observation space unlocks high-level tactical behaviors like dodging and kiting.
+The primary objective of this thesis is to evaluate how a Deep Reinforcement Learning algorithm—specifically Proximal Policy Optimization (PPO)—adapts to and masters completely distinct environmental mechanics. Rather than focusing on a single task, the agent is deployed across three fundamentally different 2D games to observe its baseline reactions to unique challenges:
 
----
+*   **Snake:** The agent must learn to navigate toward dynamically spawning food while managing spatial awareness to avoid a continuously growing body.
+*   **Flappy Bird:** The agent must understand the concept of constant gravity, timing precise discrete actions (jumps) to pass through narrow, shifting gaps.
+*   **Top-Down Shooter:** The agent faces a highly dynamic environment with complex, high-dimensional inputs, requiring it to outmaneuver enemy AI and dodge incoming projectiles.
+
+After establishing baseline behaviors for each game, the project systematically attempts to improve the AI's performance through a rigorous **7-experiment pipeline**. By tweaking neural network architectures, reshaping reward functions (e.g., time penalties vs. survival rewards), and upgrading observation spaces (e.g., integrating kinematic velocity vectors), the thesis demonstrates exactly what it takes to push an RL agent from basic competence to optimal tactical behavior in any given environment.
 
 ## 🔬 The 7-Experiment Pipeline
 
 For each environment, the agent progresses through the following structured experiments to isolate the effects of architecture, rewards, and vision:
 
-| Exp | Name | Observation Space | Reward/Penalty Focus | Key Finding / Behavior |
-| :--- | :--- | :--- | :--- | :--- |
-| **1** | Baseline PPO | Static (Coordinates/Rays) | Standard (Score only) | Basic competence, heavily reliant on luck in dynamic scenarios. |
-| **2** | Network Scaling | Static | Standard | Proved that bigger networks (256x256) cause underfitting without better inputs. |
-| **3** | The Camper | Static | **+ Survival Reward** | *Reward Hacking:* Agent avoids the main objective just to stay alive. |
-| **4** | The Rusher | Static | **- Time Penalty** | *Panic:* Agent plays aggressively but dies instantly due to lack of trajectory foresight. |
-| **5** | Kinematic Vision | **Advanced** (Velocity/Egocentric) | Standard | Drastic performance spike. Agent learns to dodge and predict the future. |
-| **6** | The Lazy Observer | Advanced | **+ Survival Reward** | Agent sees perfectly but uses it to indefinitely avoid combat/risk (Kiting without shooting). |
-| **7** | The Mastermind | Advanced | **- Time Penalty** | **Optimal AI:** The time penalty forces aggression, while the advanced vision ensures flawless tactical execution. |
+## 🔬 Experimental Methodology & The 7-Step Pipeline
 
+While each environment features unique mechanics (e.g., gravity, growing hitboxes, projectile tracking), the training process across all three games strictly adheres to a 7-experiment thematic progression. This structured pipeline isolates the specific impact of network scaling, reward shaping, and observation space design.
+
+| Exp | Experimental Focus | Observation Space | Reward Shaping | Primary Objective & General Observation |
+| :--- | :--- | :--- | :--- | :--- |
+| **1** | **Baseline Evaluation** | Static (Absolute Coordinates) | Standard Task Reward | Establishes baseline PPO performance. Agents typically struggle with dynamic tactical decisions. |
+| **2** | **Hyperparameter & Network Scaling** | Static | Standard Task Reward | Evaluates whether increasing neural network capacity (e.g., [256, 256]) or tuning exploration (entropy) can overcome poor state representation. |
+| **3** | **Positive Reward Shaping** | Static | + Survival / Distance | Introduces positive reinforcements. Often leads to reward hacking, where the agent maximizes the secondary reward while ignoring the main objective. |
+| **4** | **Negative Reward Shaping** | Static | - Time / Step Penalties | Introduces urgency. Without advanced vision, the pressure frequently results in aggressive but suboptimal or suicidal behavior. |
+| **5** | **Advanced Observation Integration** | Kinematic / Egocentric | Standard Task Reward | Upgrades inputs (e.g., velocity vectors, relative rays). Results in a drastic performance spike, unlocking predictive maneuvering. |
+| **6** | **Advanced Vision & Positive Shaping** | Kinematic / Egocentric | + Survival / Distance | Combines enhanced state representation with positive guidance, often yielding peak scores and highly cautious, prolonged gameplay. |
+| **7** | **Advanced Vision & Sparse Penalties** | Kinematic / Egocentric | - Sparse / Time Penalties | Forces optimal, aggressive execution. The agent relies solely on its superior vision and the pressure of penalties to master the environment without artificial positive guidance. |
 ---
 
 ## 📁 Repository Structure
