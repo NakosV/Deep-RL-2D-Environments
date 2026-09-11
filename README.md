@@ -31,7 +31,7 @@ After establishing baseline behaviors for each game, the project systematically 
 
 For each environment, the agent progresses through the following structured experiments to isolate the effects of architecture, rewards, and vision:
 
-## 🔬 Experimental Methodology & The 7-Step Pipeline
+### Experimental Methodology & The 7-Step Pipeline
 
 While each environment features unique mechanics (e.g., gravity, growing hitboxes, projectile tracking), the training process across all three games strictly adheres to a 7-experiment thematic progression. This structured pipeline isolates the specific impact of network scaling, reward shaping, and observation space design.
 
@@ -65,3 +65,35 @@ Thesis_RL_Games/
     ├── train_exp1_basic.py
     ├── ...
     └── eval_shooter.py
+```
+
+---
+
+## 🚀 Installation & Setup
+
+To run the environments and evaluate the trained models locally, follow these steps:
+
+1. **Clone the repository:**
+   ```bash
+   git clone https://github.com/NakosV/Deep-RL-2D-Environments.git
+   cd Deep-RL-2D-Environments
+   ```
+
+2. **Install dependencies:**
+   It is recommended to use a virtual environment (e.g., `venv` or `conda`). Then, install the required packages:
+   ```bash
+   pip install -r requirements.txt
+   ```
+
+---
+
+## 🕹️ How to Evaluate Models
+
+You don't need to retrain the agents to see them in action. Each game folder contains an evaluation script that loads the pre-trained checkpoints. 
+
+To watch the **Shooter Game** agent play:
+```bash
+cd Shooter
+python eval_shooter.py
+```
+*A menu will prompt you to select the experiment (1-7) you wish to observe.*
