@@ -52,7 +52,7 @@ While each environment features unique mechanics (e.g., gravity, growing hitboxe
 Thesis_RL_Games/
 ├── README.md
 ├── requirements.txt
-├── assets/                       # Stores GIFs Full Videos and TensorBoard graphs
+├── assets/                       # Stores GIFs, Full Videos and TensorBoard graphs
 ├── Snake/
 │   ├── train_exp1_no_penalty.py
 │   ├── ...
