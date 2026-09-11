@@ -12,7 +12,7 @@
 
 | Snake | Flappy Bird | Shooter |
 | :---: | :---: | :---: |
-| <img src="assets/GIFs/Snake_Playing.gif" width="250" alt="Snake_Playing"/> | <img src="assets/GIFs/Flappy_Bird_Playing.gif" width="250" alt="Flappy_Bird_Playing"/> | <img src="assets/shooter_placeholder.gif" width="250" alt="Shooter_Placeholder"/> |
+| <img src="assets/GIFs/Snake_Playing.gif" width="250" alt="Snake_Playing"/> | <img src="assets/GIFs/Flappy_Bird_Playing.gif" width="250" alt="Flappy_Bird_Playing"/> | <img src="assets/GIFs/Shooter_Game_Playing.gif" width="250" alt="Shooter_Game_Playing"/> |
 | *This result was accomplished by the egocentric vision in concert with a distance reward.* | *This result was accomplished by the kinematic vision in tandem with a positive reward.* | *This result was accomplished by the dynamic vision in unison with negative reward.* |
 
 ---
