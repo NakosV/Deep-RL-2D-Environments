@@ -77,17 +77,20 @@ Thesis_RL_Games/
 │            ├── Shooter/            
 │            └── Snake/                        
 ├── Snake/
+|   ├── Snake_base_game.py        # The actual game that anyone can run and play
 │   ├── train_exp1_no_penalty.py
 │   ├── ...
 │   └── eval_snake.py             # Interactive control room to test models
 ├── Flappy_Bird/
+|   ├── Flappy Bird_base_game.py        # The actual game that anyone can run and play
 │   ├── train_exp1_basic.py
 │   ├── ...
 │   └── eval_flappy.py
 └── Shooter/
-    ├── train_exp1_basic.py
-    ├── ...
-    └── eval_shooter.py
+|    ├── Shooter_game_base_game.py        # The actual game that anyone can run and play
+|    ├── train_exp1_basic.py
+|    ├── ...
+     └── eval_shooter.py
 ```
 
 ---
