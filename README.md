@@ -44,7 +44,7 @@ While each environment features unique mechanics (e.g., gravity, growing hitboxe
 
 ## Training Results & Learning Curves
 
-The graphs below illustrate the impact of modifying the agent's observation space and reward structure. Displaying the **Evaluation Mean Reward** across the 7 experiments, it is evident that providing the agent with kinematic/egocentric vision combined with appropriate sparse penalties drastically accelerates convergence and maximizes true policy performance compared to the baseline static models.
+The graphs below illustrate the impact of modifying the agent's observation space and reward structure. Displaying the **Evaluation Mean Reward** across the 7 experiments of each game, it is evident that providing the agent with kinematic/egocentric vision combined with appropriate penalties drastically accelerates convergence and maximizes true policy performance compared to the baseline static models.
 
 > *Note: Some experiment names within the graphs may differ slightly from the final terminology used in this repository.*
 
