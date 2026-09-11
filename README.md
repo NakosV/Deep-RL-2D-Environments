@@ -66,33 +66,47 @@ The graphs below illustrate the impact of modifying the agent's observation spac
 ## Repository Structure
 
 ```text
-Thesis_RL_Games/
+Thesis_PPO_2D_Games/
 ├── README.md
 ├── requirements.txt
 ├── assets/
 │   ├── GIFs/                     # Gameplay animations
 │   ├── Full Videos/              # Complete evaluation runs
 │   └── Graphs/                   # TensorBoard learning curves
-|            ├── Flappy Bird/                     
-│            ├── Shooter/            
-│            └── Snake/                        
+│       ├── Flappy Bird/                     
+│       ├── Shooter/            
+│       └── Snake/                        
+├── Models/                       # Pre-trained models and TensorBoard logs
+│   ├── Flappy Bird/
+│   │   ├── Exp_1_Basic/
+│   │   │   ├── saved_models/     # Contains .zip checkpoints and .npz evaluations
+│   │   │   └── tensorboard/      # Contains training logs and tf events
+│   │   ├── Exp_2_Entropy_coef/
+│   │   └── ...                   # Exp 3 through 7
+│   ├── Shooter Game/
+│   │   ├── Exp_1_Basic/
+│   │   ├── Exp_2_Bigger_Network/
+│   │   └── ...                   # Exp 3 through 7
+│   └── Snake/
+│       ├── Exp_1_Distance_Reward/
+│       ├── Exp_2_Distance_Reward_and_H.../
+│       └── ...                   # Exp 3 through 7
 ├── Snake/
-|   ├── Snake_base_game.py        # The actual game that anyone can run and play
-│   ├── train_exp1_no_penalty.py
+│   ├── Snake_base_game.py        # The actual game that anyone can run and play
+│   ├── train_exp1_distance_reward.py
 │   ├── ...
-│   └── eval_snake.py             # Interactive control room to test models
+│   └── play_snake_experiments.py # Interactive control room to test models
 ├── Flappy_Bird/
-|   ├── Flappy Bird_base_game.py  # The actual game that anyone can run and play
+│   ├── Flappy Bird_base_game.py  # The actual game that anyone can run and play
 │   ├── train_exp1_basic.py
 │   ├── ...
-│   └── eval_flappy.py
+│   └── play_flappy_experiments.py
 └── Shooter/
-|    ├── Shooter_game_base_game.py # The actual game that anyone can run and play
-|    ├── train_exp1_basic.py
-|    ├── ...
-     └── eval_shooter.py
+    ├── Shooter_game_base_game.py # The actual game that anyone can run and play
+    ├── train_exp1_basic.py
+    ├── ...
+    └── play_shooter_game_experiments.py
 ```
-
 ---
 
 ## Installation & Setup
@@ -120,6 +134,6 @@ You don't need to retrain the agents to see them in action. Each game folder con
 To watch the **Shooter Game** agent play:
 ```bash
 cd Shooter
-python eval_shooter.py
+python play_shooter_game_experiments.py
 ```
 *A menu will prompt you to select the experiment (1-7) you wish to observe.*
