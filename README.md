@@ -5,6 +5,8 @@
 ![Gymnasium](https://img.shields.io/badge/Environment-Gymnasium-lightgrey)
 ![Pygame](https://img.shields.io/badge/Graphics-Pygame-yellow)
 
+> **Upcoming Update:** The full official thesis document detailing the mathematical formulations, in-depth architectural choices, and comprehensive analysis will be uploaded to this repository soon.
+
 > An experimental thesis analyzing how Proximal Policy Optimization (PPO) learns to master 2D games of varying complexity. Through a comprehensive pipeline of 21 experiments across three environments, the project explores baseline AI behaviors and tests how modifying Neural Network Architecture, Reward Functions, and Observation Spaces ultimately dictates the agent's abilities to play the game.
 ---
 
@@ -51,15 +53,21 @@ The graphs below illustrate the impact of modifying the agent's observation spac
 <div align="center">
 
 ### Snake
+---
 <img src="assets/Graphs/Snake/evaluation_mean_reward.png" width="900" alt="Snake Learning Curve"/>
 
 ### Flappy Bird
+---
 <img src="assets/Graphs/Flappy%20Bird/evaluation_mean_reward.png" width="900" alt="Flappy Bird Learning Curve"/>
 
 ### Shooter
+---
 <img src="assets/Graphs/Shooter/evaluation_mean_reward.png" width="900" alt="Shooter Learning Curve"/>
 
 </div>
+
+
+> **Reproducibility Disclaimer:** Due to the inherent stochastic nature of Reinforcement Learning algorithms (e.g., random network weight initialization, environment seeds, and action sampling), retraining the models from scratch may yield slightly different learning curves and final performance metrics than the ones presented above.
 
 ---
 
@@ -137,3 +145,11 @@ cd Shooter
 python play_shooter_game_experiments.py
 ```
 *A menu will prompt you to select the experiment (1-7) you wish to observe.*
+
+## Credits & References
+
+The custom 2D environments developed for this thesis were built using **Pygame**, drawing mechanical inspiration and utilizing assets from the open-source community:
+
+* **Flappy Bird:** Base game mechanics and rendering logic adapted from the tutorial by [Coding With Russ](https://www.youtube.com/watch?v=GiUGVOqqCKg), using environmental assets provided in his [pygame_flappy_bird_assets](https://github.com/russs123/pygame_flappy_bird_assets) repository.
+* **Snake:** Grid mechanics and surface rendering inspired by the tutorial from [Clear Code](https://www.youtube.com/watch?v=QFvqStqPCRU).
+* **Top-Down Shooter:** Completely custom-built environmental mechanics, colliders, and enemy AI, synthesized from various Pygame development sources and personal engineering.
