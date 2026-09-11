@@ -89,7 +89,7 @@ Thesis_PPO_2D_Games/
 │   │   └── ...                   # Exp 3 through 7
 │   └── Snake/
 │       ├── Exp_1_Distance_Reward/
-│       ├── Exp_2_Distance_Reward_and_H.../
+│       ├── Exp_2_Distance_Reward_and_HighPenalnty/
 │       └── ...                   # Exp 3 through 7
 ├── Snake/
 │   ├── Snake_base_game.py        # The actual game that anyone can run and play
