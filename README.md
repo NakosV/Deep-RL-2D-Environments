@@ -71,8 +71,8 @@ To run the environments and evaluate the trained models locally, follow these st
 
 1. **Clone the repository:**
    ```bash
-   git clone https://github.com/NakosV/Deep-RL-2D-Environments.git
-   cd Deep-RL-2D-Environments
+   git clone https://github.com/NakosV/Thesis-PPO-2D-Games.git
+   cd Thesis-PPO-2D-Games
    ```
 
 2. **Install dependencies:**
