@@ -12,7 +12,7 @@
 
 | Snake | Flappy Bird | Shooter |
 | :---: | :---: | :---: |
-| <video src="https://github.com/user-attachments/assets/73e1fdc0-c597-4bf2-8c81-75f9b64ea7c1" width="250"></video> | <img src="assets/flappy_placeholder.gif" width="250"/> | <img src="assets/shooter_placeholder.gif" width="250"/> |
+| <img src="https://github.com/user-attachments/assets/4481fe4c-9170-4066-aafa-5054abbbf301" width="250" alt="Snake_Playing"/> | <img src="assets/flappy_placeholder.gif" width="250"/> | <img src="assets/shooter_placeholder.gif" width="250"/> |
 | *This result was accomplished by the egocentric vision in concert with a distance reward.* | *This result was accomplished by the kinematic vision in tandem with a positive reward.* | *This result was accomplished by the dynamic vision in unison with negative reward.* |
 
 ---
@@ -52,7 +52,7 @@ While each environment features unique mechanics (e.g., gravity, growing hitboxe
 Thesis_RL_Games/
 ├── README.md
 ├── requirements.txt
-├── assets/                       # Stores GIFs and TensorBoard graphs
+├── assets/                       # Stores GIFs Full Videos and TensorBoard graphs
 ├── Snake/
 │   ├── train_exp1_no_penalty.py
 │   ├── ...
