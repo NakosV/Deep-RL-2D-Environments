@@ -1,11 +1,6 @@
-# Tutorial: https://www.youtube.com/watch?v=GiUGVOqqCKg&list=PLjcN1EyupaQkz5Olxzwvo1OzDNaNLGWoJ
-# Assets: https://github.com/russs123/pygame_flappy_bird_assets
-
 import pygame
 from pygame.locals import *
 import random
-import os
-import csv
 
 pygame.init()
 
@@ -29,13 +24,10 @@ pass_pipe = False
 font = pygame.font.SysFont('Bauhaus 93', 60)
 colour = (255, 255, 255) # white
 
-
-# Game assets from https://github.com/russs123/pygame_flappy_bird_assets
 background = pygame.image.load ("/home/nakos/Desktop/img/bg.png")
 ground = pygame.image.load ("/home/nakos/Desktop/img/ground.png")
-pipe = pygame.image.load ("/home/nakos/Desktop/img//pipe.png")
+pipe = pygame.image.load ("/home/nakos/Desktop/img/pipe.png")
 button_img = pygame.image.load ("/home/nakos/Desktop/img/restart.png")
-
 
 def reset_game():
     pipe_group.empty()
@@ -47,26 +39,6 @@ def reset_game():
 def draw_text(text, font, colour, x, y):
     img = font.render(text, True, colour)
     screen.blit(img, (x, y))
-    
-def save_score_to_csv(current_score):
-    filename = "flappy_bird_game_csv.csv"
-    file_exists = os.path.isfile(filename)
-    try_num = 1
-    
-    # Αν υπάρχει ήδη, διαβάζουμε πόσες προσπάθειες έχουν γίνει
-    if file_exists:
-        with open(filename, 'r', encoding='utf-8') as f:
-            reader = csv.reader(f)
-            rows = [row for row in reader if row]
-            if len(rows) > 0:
-                try_num = len(rows) # Επειδή η 1η γραμμή είναι το Header, το len = επόμενη προσπάθεια
-                
-    # Προσθήκη του καινούριου σκορ
-    with open(filename, 'a', newline='', encoding='utf-8') as f:
-        writer = csv.writer(f)
-        if not file_exists or try_num == 1:
-            writer.writerow(["Try", "Score"]) # Δημιουργία Header αν είναι το 1ο game
-        writer.writerow([f"Try {try_num}", current_score])
         
 class Bird(pygame.sprite.Sprite):
     def __init__(self, x, y):
@@ -124,7 +96,7 @@ class Pipe(pygame.sprite.Sprite):
         self.image = pipe
         self.rect = self.image.get_rect()
         if position == 1: # 1 for top, -1 for bottom
-            self.image = pygame.transform.flip(self.image, False, True) # False is for the x axes and yes for the y axes
+            self.image = pygame.transform.flip(self.image, False, True) # False is for the x axes and True for the y axes
             self.rect.bottomleft = [x, y - int(pipe_gap/2)]
         if position == -1:
             self.rect.topleft = [x, y + int(pipe_gap/2)]
@@ -132,7 +104,7 @@ class Pipe(pygame.sprite.Sprite):
     def update(self):
         self.rect.x = self.rect.x - speed
         if self.rect.right < 0:
-            self.kill()   
+            self.kill()    
             
 class Button():
     def __init__(self, x, y, image):
@@ -177,14 +149,12 @@ while run:
     
     draw_text(f"Score: {score}", font, colour, int(screen_width/2)-80, 20)
     
+    # Collision check with pipes
     if pygame.sprite.groupcollide(bird_group, pipe_group, False, False):
-        if game_over == False:
-            save_score_to_csv(score)
         game_over = True
 
+    # Collision check with the ground
     if flappy.rect.bottom >= 768:
-        if game_over == False:
-            save_score_to_csv(score)
         game_over = True
         is_flying = False
     
@@ -214,6 +184,7 @@ while run:
             run = False
         if (event.type == pygame.MOUSEBUTTONDOWN or (event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE)) and is_flying == False and game_over == False:
             is_flying = True
+            
     pygame.display.update()
             
 pygame.quit()

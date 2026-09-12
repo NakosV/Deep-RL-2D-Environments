@@ -9,8 +9,6 @@ from gymnasium import spaces
 
 os.environ["OMP_NUM_THREADS"] = "1"
 
-# --- ΕΝΙΑΙΟ ΠΕΡΙΒΑΛΛΟΝ ΓΙΑ ΑΞΙΟΛΟΓΗΣΗ ---
-# Δέχεται παράμετρο "obs_mode" για να προσαρμόζεται στο εκάστοτε πείραμα (3 ή 4 inputs).
 class EvaluatorFlappyEnv(gym.Env):
     metadata = {"render_modes": ["human"], "render_fps": 60}
 
@@ -29,7 +27,7 @@ class EvaluatorFlappyEnv(gym.Env):
         
         self.action_space = spaces.Discrete(2)
         
-        # Ανάλογα το πείραμα, αλλάζει το μέγεθος της εισόδου
+        # It sees if the experiment you want to test takes in 3 or 4 inputs and acts accordingly
         shape_size = 4 if obs_mode == "velocity" else 3
         self.observation_space = spaces.Box(low=0.0, high=1.0, shape=(shape_size,), dtype=np.float32)
         
@@ -42,10 +40,12 @@ class EvaluatorFlappyEnv(gym.Env):
         if self._assets_loaded: return
         pygame.init()
         pygame.font.init()
-        self.bg_img = pygame.image.load("/home/nakos/Desktop/img/bg.png")
-        self.ground_img = pygame.image.load("/home/nakos/Desktop/img/ground.png")
-        self.pipe_img = pygame.image.load("/home/nakos/Desktop/img/pipe.png")
-        self.bird_imgs = [pygame.image.load(f"/home/nakos/Desktop/img/bird{num}.png") for num in range(1, 4)]
+        
+        # Replace all the paths of the images after downloading the assets
+        self.bg_img = pygame.image.load("/the_path_of_the_img_of_the_bird.png")
+        self.ground_img = pygame.image.load("/the_path_of_the_img_of_the_ground.png")
+        self.pipe_img = pygame.image.load("/the_path_of_the_img_of_the_pipe.png")
+        self.bird_imgs = [pygame.image.load(f"/the_path_of_the_imgs_of_the_bird{num}.png") for num in range(1, 4)]
         self.font = pygame.font.SysFont('Bauhaus 93', 60)
         self._assets_loaded = True
 
@@ -123,7 +123,6 @@ class EvaluatorFlappyEnv(gym.Env):
 
         self.render()
         
-        # Χειρισμός για να μπορείς να κλείσεις το παράθυρο με το (X)
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
@@ -168,9 +167,8 @@ class EvaluatorFlappyEnv(gym.Env):
 
 # --- ΛΟΓΙΚΗ ΜΕΝΟΥ ---
 if __name__ == "__main__":
-    BASE_DIR = "/home/nakos/Desktop/Εργασίες/Πτυχιακή/Flappy_Bird"
+    BASE_DIR = "/PlaceHolder_path" # Replace it with the place that the models are saved at
     
-    # Λεξικό με τα ονόματα των φακέλων (προσαρμοσμένα στα ονόματα που μου έδωσες)
     EXPERIMENTS = {
         "1": {"name": "Exp_1_Basic", "obs": "basic"},
         "2": {"name": "Exp_2_Entropy_coef", "obs": "basic"},
@@ -189,34 +187,28 @@ if __name__ == "__main__":
         "5": "1000000",
     }
 
-    print("\n" + "="*50)
-    print(" 🐦 FLAPPY BIRD AI - CONTROL ROOM 🐦 ")
-    print("="*50)
-    print("Επίλεξε Πείραμα για να τρέξεις:")
-    print("1. Basic PPO (Χωρίς Entropy, 3 Inputs)")
-    print("2. Με Entropy Coef (Περιέργεια, 3 Inputs)")
-    print("3. Με Survival Reward (+0.1 ανά frame)")
-    print("4. Με Survival Penalty (-0.1 ανά frame)")
-    print("5. Με Velocity Observation (4 Inputs)")
-    print("6. Με Velocity & Survival Reward")
-    print("7. Με Velocity & Survival Penalty")
-    print("="*50)
+    print("1. Basic PPO")
+    print("2. PPO with Entropy Coef")
+    print("3. PPO with Survival Reward")
+    print("4. PPO with Survival Penalty")
+    print("5. PPO with Velocity Observation")
+    print("6. PPO with Velocity & Survival Reward")
+    print("7. PPO with Velocity & Survival Penalty")
     
-    exp_choice = input("Πληκτρολόγησε τον αριθμό του πειράματος (1-7): ")
+    exp_choice = input("Type the number of the experiment that you want (1-7): ")
     if exp_choice not in EXPERIMENTS:
-        print("Λάθος επιλογή. Έξοδος...")
         sys.exit()
         
-    print("\nΕπίλεξε Checkpoint (Βήμα Εκπαίδευσης):")
+    print("\Choose Checkpoint:")
     print("1. 50.000 Steps")
     print("2. 200.000 Steps")
     print("3. 500.000 Steps")
     print("4. 800.000 Steps")
-    print("5. 1.000.000 Steps (Τελικό)")
-    print("6. Φόρτωση του 'best_model' (αν υπάρχει)")
+    print("5. 1.000.000 Steps")
+    print("6. Best_model")
     print("="*50)
     
-    ckpt_choice = input("Πληκτρολόγησε τον αριθμό (1-6): ")
+    ckpt_choice = input("Type the number of the model that you want (1-6): ")
     
     folder_name = EXPERIMENTS[exp_choice]["name"]
     obs_mode = EXPERIMENTS[exp_choice]["obs"]
@@ -226,23 +218,18 @@ if __name__ == "__main__":
     elif ckpt_choice in CHECKPOINTS:
         model_file = f"model_step_{CHECKPOINTS[ckpt_choice]}"
     else:
-        print("Λάθος επιλογή. Έξοδος...")
         sys.exit()
 
     model_path = os.path.join(BASE_DIR, folder_name, "saved_models", model_file)
     
     if not os.path.exists(model_path + ".zip"):
-        print(f"\n[ΣΦΑΛΜΑ] Το μοντέλο δεν βρέθηκε στη διαδρομή:\n{model_path}.zip")
-        print("Μήπως δεν έχει ολοκληρωθεί ακόμα η εκπαίδευση αυτού του checkpoint;")
+        print(f"\n[Error] The model was not found at:\n{model_path}.zip")
         sys.exit()
 
-    print(f"\nΦόρτωση μοντέλου: {folder_name} -> {model_file}...")
+    print(f"\nLoading the model: {folder_name} -> {model_file}...")
     env = EvaluatorFlappyEnv(obs_mode=obs_mode)
     model = PPO.load(model_path)
     
-    print("Το περιβάλλον ξεκινά! (Κλείσε το παράθυρο του παιχνιδιού για έξοδο)")
-    
-    # Ατέρμονο Loop για να παίζει συνεχόμενα
     while True:
         obs, _ = env.reset()
         terminated = False
