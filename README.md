@@ -144,7 +144,7 @@ To watch the **Shooter Game** agent play:
 cd Shooter
 python play_shooter_game_experiments.py
 ```
-*A menu will prompt you to select the experiment (1-7) you wish to observe.*
+*A menu will prompt you to select the experiment (1-7) you wish to observe folloed by another menu that will prompt you to select the version of the model that you want to test (1-6).*
 
 ## Credits & References
 
