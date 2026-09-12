@@ -11,29 +11,28 @@ from gymnasium import spaces
 
 os.environ["OMP_NUM_THREADS"] = "1"
 
-# --- Constants & Level Map ---
-TILE_SIZE = 40
-COLS, ROWS = 30, 20
-SCREEN_WIDTH = COLS * TILE_SIZE
-SCREEN_HEIGHT = ROWS * TILE_SIZE
+Tile_size = 40
+Columns, Rows = 30, 20
+Screen_width = Columns * Tile_size
+Screen_height = Rows * Tile_size
 
-BG_COLOR = (30, 30, 30)
-TILE_COLOR = (45, 45, 45)
-WALL_COLOR = (240, 240, 240)
-PLAYER_COLOR = (50, 150, 255)
-ENEMY_COLOR = (255, 50, 50)
-BULLET_PLAYER = (100, 255, 100)
-BULLET_ENEMY = (255, 150, 50)
+bg_clour = (30, 30, 30)
+tile_colour = (45, 45, 45)
+wall_colour = (240, 240, 240)
+player_colour = (50, 150, 255)
+enemy_colour = (255, 50, 50)
+player_bullet = (100, 255, 100)
+enemy_bullet = (255, 150, 50)
 
-PLAYER_SPEED = 4.0 
-ENEMY_SPEED = 2.5  
-PLAYER_RADIUS_SHOOT = 250
-ENEMY_RADIUS_SHOOT = 300
-SHOOT_COOLDOWN_PLAYER = 400 
-SHOOT_COOLDOWN_ENEMY = 700  
-ENTITY_SIZE = 12 
+Player_speed = 4.0 
+Enemy_speed = 2.5  
+Player_shooting_radius = 250
+Enemy_shooting_radius = 300
+Player_shot_cooldown = 400 
+Enemy_shot_cooldown = 700  
+Enemy_size = 12 
 
-LEVEL_MAP = [
+Map = [
     [0]*30,
     [0,0,0,0,0,0,1,1,0,0,0,1,0,0,1,1,0,0,0,0,0,0,1,1,0,0,1,1,0,0],
     [0,1,0,0,0,0,0,1,0,0,0,0,0,0,1,0,0,0,0,0,0,0,1,0,0,0,0,0,1,0],
@@ -57,13 +56,14 @@ LEVEL_MAP = [
 ]
 
 walls = []
-for y in range(ROWS):
-    for x in range(COLS):
-        if LEVEL_MAP[y][x] == 1:
-            walls.append(pygame.Rect(x * TILE_SIZE, y * TILE_SIZE, TILE_SIZE, TILE_SIZE))
+for y in range(Rows):
+    for x in range(Columns):
+        if Map[y][x] == 1:
+            walls.append(pygame.Rect(x * Tile_size, y * Tile_size, Tile_size, Tile_size))
 
-# --- A* Logic ---
+# A* Logic
 def heuristic(a, b): return abs(a[0] - b[0]) + abs(a[1] - b[1])
+
 def astar(start, goal):
     neighbors = [(0, 1), (0, -1), (1, 0), (-1, 0)]
     open_set = []
@@ -81,8 +81,8 @@ def astar(start, goal):
             return path
         for dx, dy in neighbors:
             neighbor = (current[0] + dx, current[1] + dy)
-            if 0 <= neighbor[0] < COLS and 0 <= neighbor[1] < ROWS:
-                if LEVEL_MAP[neighbor[1]][neighbor[0]] == 1: continue 
+            if 0 <= neighbor[0] < Columns and 0 <= neighbor[1] < Rows:
+                if Map[neighbor[1]][neighbor[0]] == 1: continue 
                 tentative_g = g_score[current] + 1
                 if neighbor not in g_score or tentative_g < g_score[neighbor]:
                     came_from[neighbor] = current
@@ -91,12 +91,11 @@ def astar(start, goal):
                     heapq.heappush(open_set, (f_score, neighbor))
     return []
 
-# --- Entities ---
 class Entity:
     def __init__(self, x, y, speed, color):
         self.pos = Vector2(x, y)
         self.speed = speed
-        self.radius = ENTITY_SIZE
+        self.radius = Enemy_size
         self.color = color
         self.last_shot = 0
         
@@ -114,17 +113,17 @@ class Entity:
             if rect.colliderect(wall):
                 if dy > 0: self.pos.y = wall.top - self.radius
                 if dy < 0: self.pos.y = wall.bottom + self.radius
-        self.pos.x = max(self.radius, min(SCREEN_WIDTH - self.radius, self.pos.x))
-        self.pos.y = max(self.radius, min(SCREEN_HEIGHT - self.radius, self.pos.y))
+        self.pos.x = max(self.radius, min(Screen_width - self.radius, self.pos.x))
+        self.pos.y = max(self.radius, min(Screen_height - self.radius, self.pos.y))
 
 class Player(Entity):
     def __init__(self):
-        super().__init__(SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2, PLAYER_SPEED, PLAYER_COLOR)
+        super().__init__(Screen_width // 2, Screen_height // 2, Player_speed, player_colour)
         self.radius = 10 
 
 class Enemy(Entity):
     def __init__(self, x, y):
-        super().__init__(x, y, ENEMY_SPEED, ENEMY_COLOR)
+        super().__init__(x, y, Enemy_speed, enemy_colour)
         self.path = []
         self.last_path_update = 0
         self.vx = 0.0
@@ -132,15 +131,15 @@ class Enemy(Entity):
 
     def update(self, player, enemies, bullets, current_time):
         if current_time - self.last_path_update > 500:
-            start_grid = (int(self.pos.x // TILE_SIZE), int(self.pos.y // TILE_SIZE))
-            target_grid = (int(player.pos.x // TILE_SIZE), int(player.pos.y // TILE_SIZE))
+            start_grid = (int(self.pos.x // Tile_size), int(self.pos.y // Tile_size))
+            target_grid = (int(player.pos.x // Tile_size), int(player.pos.y // Tile_size))
             self.path = astar(start_grid, target_grid)
             self.last_path_update = current_time + random.randint(0, 100)
 
         dx, dy = 0, 0
         if self.path:
             next_node = self.path[0]
-            target_pos = Vector2(next_node[0] * TILE_SIZE + TILE_SIZE/2, next_node[1] * TILE_SIZE + TILE_SIZE/2)
+            target_pos = Vector2(next_node[0] * Tile_size + Tile_size/2, next_node[1] * Tile_size + Tile_size/2)
             if self.pos.distance_to(target_pos) < self.speed: self.path.pop(0)
             else:
                 direction = (target_pos - self.pos).normalize()
@@ -162,8 +161,8 @@ class Enemy(Entity):
                     push_dir = (self.pos - other.pos).normalize()
                     self.pos += push_dir * (overlap / 2)
                     
-        if current_time - self.last_shot >= SHOOT_COOLDOWN_ENEMY:
-            if self.pos.distance_to(player.pos) <= ENEMY_RADIUS_SHOOT:
+        if current_time - self.last_shot >= Enemy_shot_cooldown:
+            if self.pos.distance_to(player.pos) <= Enemy_shooting_radius:
                 direction = (player.pos - self.pos).normalize()
                 bullets.append(Bullet(self.pos.x, self.pos.y, direction, False, self))
                 self.last_shot = current_time
@@ -174,7 +173,7 @@ class Bullet:
         self.direction = direction
         self.speed = 8.0 
         self.is_player = is_player
-        self.color = BULLET_PLAYER if is_player else BULLET_ENEMY
+        self.color = player_bullet if is_player else enemy_bullet
         self.radius = 4
         self.active = True
         self.owner = owner 
@@ -186,11 +185,9 @@ class Bullet:
             if rect.colliderect(wall):
                 self.active = False
                 break
-        if not (0 <= self.pos.x <= SCREEN_WIDTH and 0 <= self.pos.y <= SCREEN_HEIGHT):
+        if not (0 <= self.pos.x <= Screen_width and 0 <= self.pos.y <= Screen_height):
             self.active = False
 
-
-# --- ΕΝΙΑΙΟ ΠΕΡΙΒΑΛΛΟΝ ΓΙΑ ΑΞΙΟΛΟΓΗΣΗ ---
 class EvaluatorShooterEnv(gym.Env):
     metadata = {"render_modes": ["human"], "render_fps": 60}
 
@@ -199,6 +196,7 @@ class EvaluatorShooterEnv(gym.Env):
         self.vision_mode = vision_mode
         self.action_space = spaces.Discrete(9)
         
+        # It checks which type of vision the model that gets picked has and acts accordingly
         shape_size = 32 if vision_mode == "kinematic" else 20
         self.observation_space = spaces.Box(low=-1.0, high=1.0, shape=(shape_size,), dtype=np.float32)
         
@@ -220,18 +218,18 @@ class EvaluatorShooterEnv(gym.Env):
     def spawn_enemies(self):
         count = self.base_enemy_count + (self.level // 2) * 2
         border_tiles = []
-        for x in range(COLS):
-            if LEVEL_MAP[0][x] == 0: border_tiles.append((x, 0))
-            if LEVEL_MAP[ROWS-1][x] == 0: border_tiles.append((x, ROWS-1))
-        for y in range(ROWS):
-            if LEVEL_MAP[y][0] == 0: border_tiles.append((0, y))
-            if LEVEL_MAP[y][COLS-1] == 0: border_tiles.append((COLS-1, y))
+        for x in range(Columns):
+            if Map[0][x] == 0: border_tiles.append((x, 0))
+            if Map[Rows-1][x] == 0: border_tiles.append((x, Rows-1))
+        for y in range(Rows):
+            if Map[y][0] == 0: border_tiles.append((0, y))
+            if Map[y][Columns-1] == 0: border_tiles.append((Columns-1, y))
 
         spawned = 0
         while spawned < count:
             spawn_tile = random.choice(border_tiles)
-            spawn_pos = Vector2(spawn_tile[0]*TILE_SIZE + TILE_SIZE/2, spawn_tile[1]*TILE_SIZE + TILE_SIZE/2)
-            if spawn_pos.distance_to(self.player.pos) > TILE_SIZE * 3:
+            spawn_pos = Vector2(spawn_tile[0]*Tile_size + Tile_size/2, spawn_tile[1]*Tile_size + Tile_size/2)
+            if spawn_pos.distance_to(self.player.pos) > Tile_size * 3:
                 self.enemies.append(Enemy(spawn_pos.x, spawn_pos.y))
                 spawned += 1
 
@@ -246,10 +244,10 @@ class EvaluatorShooterEnv(gym.Env):
             current = Vector2(self.player.pos.x, self.player.pos.y)
             dist = 0
             hit = False
-            while dist < SCREEN_WIDTH and not hit:
+            while dist < Screen_width and not hit:
                 current += ray_dir * 5
                 dist += 5
-                if not (0 <= current.x <= SCREEN_WIDTH and 0 <= current.y <= SCREEN_HEIGHT):
+                if not (0 <= current.x <= Screen_width and 0 <= current.y <= Screen_height):
                     hit = True
                     break
                 for wall in walls:
@@ -261,11 +259,11 @@ class EvaluatorShooterEnv(gym.Env):
         sorted_enemies = sorted(self.enemies, key=lambda e: self.player.pos.distance_to(e.pos))
         for i in range(3):
             if i < len(sorted_enemies):
-                dx = (sorted_enemies[i].pos.x - self.player.pos.x) / SCREEN_WIDTH
-                dy = (sorted_enemies[i].pos.y - self.player.pos.y) / SCREEN_HEIGHT
+                dx = (sorted_enemies[i].pos.x - self.player.pos.x) / Screen_width
+                dy = (sorted_enemies[i].pos.y - self.player.pos.y) / Screen_height
                 obs.extend([dx, dy])
                 if self.vision_mode == "kinematic":
-                    obs.extend([sorted_enemies[i].vx / ENEMY_SPEED, sorted_enemies[i].vy / ENEMY_SPEED])
+                    obs.extend([sorted_enemies[i].vx / Enemy_speed, sorted_enemies[i].vy / Enemy_speed])
             else:
                 obs.extend([0.0, 0.0])
                 if self.vision_mode == "kinematic": obs.extend([0.0, 0.0])
@@ -274,8 +272,8 @@ class EvaluatorShooterEnv(gym.Env):
         sorted_bullets = sorted(enemy_bullets, key=lambda b: self.player.pos.distance_to(b.pos))
         for i in range(3):
             if i < len(sorted_bullets):
-                dx = (sorted_bullets[i].pos.x - self.player.pos.x) / SCREEN_WIDTH
-                dy = (sorted_bullets[i].pos.y - self.player.pos.y) / SCREEN_HEIGHT
+                dx = (sorted_bullets[i].pos.x - self.player.pos.x) / Screen_width
+                dy = (sorted_bullets[i].pos.y - self.player.pos.y) / Screen_height
                 obs.extend([dx, dy])
                 if self.vision_mode == "kinematic":
                     vx = (sorted_bullets[i].direction.x * sorted_bullets[i].speed) / 8.0
@@ -306,9 +304,9 @@ class EvaluatorShooterEnv(gym.Env):
 
         self.player.move_with_collision(dx, dy)
 
-        if self.sim_time - self.player.last_shot >= SHOOT_COOLDOWN_PLAYER and self.enemies:
+        if self.sim_time - self.player.last_shot >= Player_shot_cooldown and self.enemies:
             closest_enemy = min(self.enemies, key=lambda e: self.player.pos.distance_to(e.pos))
-            if self.player.pos.distance_to(closest_enemy.pos) <= PLAYER_RADIUS_SHOOT:
+            if self.player.pos.distance_to(closest_enemy.pos) <= Player_shooting_radius:
                 direction = (closest_enemy.pos - self.player.pos).normalize()
                 self.bullets.append(Bullet(self.player.pos.x, self.player.pos.y, direction, True, self.player))
                 self.player.last_shot = self.sim_time
@@ -356,22 +354,22 @@ class EvaluatorShooterEnv(gym.Env):
     def render(self):
         if self.screen is None:
             pygame.init()
-            self.screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
+            self.screen = pygame.display.set_mode((Screen_width, Screen_height))
             pygame.display.set_caption("Shooter AI - Evaluation Mode")
             self.clock = pygame.time.Clock()
             pygame.font.init()
             self.font = pygame.font.SysFont('Bauhaus 93', 40)
 
-        self.screen.fill(BG_COLOR)
+        self.screen.fill(bg_clour)
         
-        for y in range(ROWS):
-            for x in range(COLS):
-                if LEVEL_MAP[y][x] == 0:
-                    pygame.draw.rect(self.screen, TILE_COLOR, (x*TILE_SIZE+1, y*TILE_SIZE+1, TILE_SIZE-2, TILE_SIZE-2))
+        for y in range(Rows):
+            for x in range(Columns):
+                if Map[y][x] == 0:
+                    pygame.draw.rect(self.screen, tile_colour, (x*Tile_size+1, y*Tile_size+1, Tile_size-2, Tile_size-2))
 
         wall_padding = 4
         for wall in walls:
-            pygame.draw.rect(self.screen, WALL_COLOR, (wall.x + wall_padding, wall.y + wall_padding, TILE_SIZE - wall_padding*2, TILE_SIZE - wall_padding*2))
+            pygame.draw.rect(self.screen, wall_colour, (wall.x + wall_padding, wall.y + wall_padding, Tile_size - wall_padding*2, Tile_size - wall_padding*2))
             
         for bullet in self.bullets:
             pygame.draw.circle(self.screen, bullet.color, (int(bullet.pos.x), int(bullet.pos.y)), bullet.radius)
@@ -391,10 +389,8 @@ class EvaluatorShooterEnv(gym.Env):
             pygame.quit()
             self.screen = None
 
-
-# --- ΛΟΓΙΚΗ ΜΕΝΟΥ ---
 if __name__ == "__main__":
-    BASE_DIR = "/home/nakos/Desktop/Εργασίες/Πτυχιακή/Shooter_Game"
+    BASE_DIR = "/Place/Holder/Path_" # Replace it with where you have the models saved
     
     EXPERIMENTS = {
         "1": {"name": "Exp_1_Basic", "vision": "static"},
@@ -414,34 +410,26 @@ if __name__ == "__main__":
         "5": "2000000",
     }
 
-    print("\n" + "="*50)
-    print(" 🔫 SHOOTER AI - CONTROL ROOM 🔫 ")
-    print("="*50)
-    print("Επίλεξε Πείραμα για να τρέξεις:")
-    print("1. Basic PPO (Στατικό Ραντάρ, 64x64)")
-    print("2. Network Scaling (Στατικό Ραντάρ, 256x256)")
-    print("3. The Camper (Θετική Ανταμοιβή Επιβίωσης)")
-    print("4. The Rusher (Αρνητική Ποινή Χρόνου)")
-    print("5. Kinematic Vision (Προσθήκη Ταχύτητας Σφαιρών)")
+    print("1. Basic PPO")
+    print("2. Network Scaling")
+    print("3. Survival Reward")
+    print("4. Survival Punishment")
+    print("5. Kinematic Vision")
     print("6. Kinematics + Survival Reward")
-    print("7. The Mastermind (Kinematics + Survival Penalty)")
-    print("="*50)
+    print("7. Kinematics + Survival Penalty")
     
-    exp_choice = input("Πληκτρολόγησε τον αριθμό του πειράματος (1-7): ")
+    exp_choice = input("Choose the number of experiment that you want to try (1-7): ")
     if exp_choice not in EXPERIMENTS:
-        print("Λάθος επιλογή. Έξοδος...")
         sys.exit()
         
-    print("\nΕπίλεξε Checkpoint (Βήμα Εκπαίδευσης):")
     print("1. 400.000 Steps")
     print("2. 800.000 Steps")
     print("3. 1.200.000 Steps")
     print("4. 1.600.000 Steps")
-    print("5. 2.000.000 Steps (Τελικό)")
-    print("6. Φόρτωση του 'best_model' (αν υπάρχει)")
-    print("="*50)
+    print("5. 2.000.000 Steps")
+    print("6. Best Model")
     
-    ckpt_choice = input("Πληκτρολόγησε τον αριθμό (1-6): ")
+    ckpt_choice = input("Choose the number of model that you want to try (1-6): ")
     
     folder_name = EXPERIMENTS[exp_choice]["name"]
     vision_mode = EXPERIMENTS[exp_choice]["vision"]
@@ -451,21 +439,16 @@ if __name__ == "__main__":
     elif ckpt_choice in CHECKPOINTS:
         model_file = f"model_step_{CHECKPOINTS[ckpt_choice]}"
     else:
-        print("Λάθος επιλογή. Έξοδος...")
         sys.exit()
 
     model_path = os.path.join(BASE_DIR, folder_name, "saved_models", model_file)
     
     if not os.path.exists(model_path + ".zip"):
-        print(f"\n[ΣΦΑΛΜΑ] Το μοντέλο δεν βρέθηκε στη διαδρομή:\n{model_path}.zip")
-        print("Μήπως δεν έχει ολοκληρωθεί ακόμα η εκπαίδευση αυτού του checkpoint;")
+        print(f"\n[Error] The model was not found at:\n{model_path}.zip")
         sys.exit()
 
-    print(f"\nΦόρτωση μοντέλου: {folder_name} -> {model_file}...")
     env = EvaluatorShooterEnv(vision_mode=vision_mode)
     model = PPO.load(model_path)
-    
-    print("Το περιβάλλον ξεκινά! (Κλείσε το παράθυρο του παιχνιδιού για έξοδο)")
     
     while True:
         obs, _ = env.reset()
