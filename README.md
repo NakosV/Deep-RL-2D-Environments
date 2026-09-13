@@ -1,9 +1,14 @@
 # Development of 2D Games and Design of Reinforcement Learning Agents for Autonomous Solving
 
-![Python](https://img.shields.io/badge/Python-3.8%2B-blue)
-![Stable Baselines3](https://img.shields.io/badge/Stable_Baselines3-PPO-orange)
-![Gymnasium](https://img.shields.io/badge/Environment-Gymnasium-lightgrey)
-![Pygame](https://img.shields.io/badge/Graphics-Pygame-yellow)
+<div align="center">
+
+![Python](https://img.shields.io/badge/Python-3776AB?style=flat-square&logo=python&logoColor=white)
+![PyTorch](https://img.shields.io/badge/PyTorch-EE4C2C?style=flat-square&logo=pytorch&logoColor=white)
+![Stable Baselines3](https://img.shields.io/badge/Stable_Baselines3-E67E22?style=flat-square)
+![Gymnasium](https://img.shields.io/badge/Gymnasium-000000?style=flat-square)
+![Pygame](https://img.shields.io/badge/Pygame-F5ED00?style=flat-square&logoColor=black)
+
+</div>
 
 > **Upcoming Update:** The full official thesis document detailing the mathematical formulations, in-depth architectural choices, and comprehensive analysis will be uploaded to this repository soon.
 
