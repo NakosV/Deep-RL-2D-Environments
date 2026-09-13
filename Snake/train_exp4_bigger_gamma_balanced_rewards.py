@@ -1,5 +1,4 @@
 import pygame
-import sys
 import os
 import math
 import numpy as np
@@ -24,7 +23,12 @@ class AdvancedSnakeEnv(gym.Env):
         self.cell_number = 20
         self.width = self.cell_number * self.cell_size
         self.height = self.cell_number * self.cell_size
+        # The AI can do 3 actions, and those actions are given a number starting from 0 and ending at 2
+        # The actions are: continuing straight, turning right (clockwise), and turning left (counter-clockwise)
         self.action_space = spaces.Discrete(3)
+        
+        # The AI uses ray casting, utilizing 8 rays looking at 8 different directions. Through these rays, it can see the distance to the walls, the distance to the fruit, and the distance to its own body
+        # It also uses a one-hot encoded vector to see its current moving direction (up, down, left, or right)
         self.observation_space = spaces.Box(low=0.0, high=1.0, shape=(28,), dtype=np.float32)
         self.render_mode = render_mode
         self.screen = None
@@ -92,19 +96,21 @@ class AdvancedSnakeEnv(gym.Env):
         is_body_collision = head in self.snake_body[1:]
         
         if is_wall_collision or is_body_collision or self.frame_iteration > 100 * len(self.snake_body):
-            reward = -10.0
+            reward = -10.0 # Reward for dying
             terminated = True
             return self._get_obs(), reward, terminated, False, {"score": self.score}
 
         if head == self.fruit_pos:
             self.score += 1
-            reward = 10.0
+            reward = 10.0 # Reward for eating a fruit
             self.snake_body.append(self.snake_body[-1])
             self.fruit_pos = self._randomize_fruit()
             self.frame_iteration = 0
         else:
             current_distance = self._get_distance(head, self.fruit_pos)
             if current_distance < self.prev_distance:
+                
+            # The rewards for guiding the AI in tantum with the negative reward that is given to it every frame are more balanced
                 reward = 0.02
             else:
                 reward = -0.02
@@ -115,7 +121,7 @@ class AdvancedSnakeEnv(gym.Env):
         return self._get_obs(), reward, terminated, False, {"score": self.score}
 
     def render(self):
-        pass # Δεν χρειάζεται για το training
+        pass
 
     def close(self):
         if self.screen is not None: pygame.quit(); self.screen = None
@@ -132,18 +138,16 @@ class MilestoneSaveCallback(BaseCallback):
             if self.num_timesteps >= m and m not in self.recorded_milestones:
                 self.recorded_milestones.add(m)
                 self.model.save(os.path.join(self.save_dir, f"model_step_{m}"))
-                print(f"[Milestone] Αποθήκευση στο βήμα {m}")
         return True
 
 if __name__ == "__main__":
-    EXP_NAME = "Exp_4_BiggerGammaBalancedRewards"
-    base_dir = f"/home/nakos/Desktop/Εργασίες/Πτυχιακή/Snake/{EXP_NAME}"
+    EXP_NAME = "Exp_4_Bigger_Gamma_and_Balanced_Rewards"
+    base_dir = f"/PlaceHolderPath/{EXP_NAME}" # Replace the path to where you want the model to be saved
     log_dir = f"{base_dir}/tensorboard/"
     save_dir = f"{base_dir}/saved_models/"
     os.makedirs(save_dir, exist_ok=True)
     os.makedirs(log_dir, exist_ok=True)
 
-    # Καταγραφή των logs στο τερματικό ΚΑΙ σε αρχείο CSV
     new_logger = configure(log_dir, ["stdout", "csv", "tensorboard"])
 
     def make_train_env(): return Monitor(AdvancedSnakeEnv(render_mode=None))
@@ -153,7 +157,9 @@ if __name__ == "__main__":
     eval_callback = EvalCallback(eval_env, best_model_save_path=save_dir, log_path=save_dir, eval_freq=10000, n_eval_episodes=5, deterministic=True)
     milestone_callback = MilestoneSaveCallback(save_dir=save_dir, milestones=[400000, 800000, 1200000, 1600000, 2000000])
     
-    # Μεγάλο δίκτυο [256, 256], Gamma 0.995
+    # In the fourth experiment the Neural Network gets a lot bigger 
+    # The AI is given an ent_coef to explore more and find better strategies
+    # And it is also given a gamma to be able to look further to the future
     policy_kwargs = dict(net_arch=dict(pi=[256, 256], vf=[256, 256]))
     model = PPO("MlpPolicy", train_env, verbose=1, policy_kwargs=policy_kwargs, ent_coef=0.02, gamma=0.995)
     model.set_logger(new_logger)

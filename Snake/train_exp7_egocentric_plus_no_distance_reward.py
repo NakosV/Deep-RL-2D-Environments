@@ -1,5 +1,4 @@
 import pygame
-import sys
 import os
 import math
 import numpy as np
@@ -24,8 +23,13 @@ class AdvancedSnakeEnv(gym.Env):
         self.cell_number = 20
         self.width = self.cell_number * self.cell_size
         self.height = self.cell_number * self.cell_size
+        
+        # The AI can do 3 actions, and those actions are given a number starting from 0 and ending at 2
+        # The actions are: continuing straight, turning right (clockwise), and turning left (counter-clockwise)
         self.action_space = spaces.Discrete(3)
-        # Σχετική όραση, 24 inputs (Εγωκεντρική)
+        
+        # The AI uses egocentric ray casting, utilizing 8 rays that cast relative to the snake's current moving direction (forward, right, backward, left, and diagonals). Through these rays, it can see the distance to the walls, the distance to the fruit, and the distance to its own body
+        # Because the vision rotates with the snake's head, the AI no longer needs extra inputs to know its absolute moving direction, reducing the total inputs to 24
         self.observation_space = spaces.Box(low=0.0, high=1.0, shape=(24,), dtype=np.float32)
         self.render_mode = render_mode
         self.screen = None
@@ -98,18 +102,19 @@ class AdvancedSnakeEnv(gym.Env):
         is_body_collision = head in self.snake_body[1:]
         
         if is_wall_collision or is_body_collision or self.frame_iteration > 100 * len(self.snake_body):
-            reward = -10.0
+            reward = -10.0 # Reward for dying
             terminated = True
             return self._get_obs(), reward, terminated, False, {"score": self.score}
 
         if head == self.fruit_pos:
             self.score += 1
-            reward = 10.0
+            reward = 10.0 # Reward for eating a fruit
             self.snake_body.append(self.snake_body[-1])
             self.fruit_pos = self._randomize_fruit()
             self.frame_iteration = 0
         else:
-            # SPARSE REWARDS (Καθόλου Distance Reward, μόνο μεγάλο Penalty)
+            # The tactic from the third experiment makes a return. 
+            # The program only gives the AI a negative reward every frame and no rewards to guide it towards food
             reward = -0.02 
             self.prev_distance = self._get_distance(head, self.fruit_pos)
 
@@ -138,8 +143,8 @@ class MilestoneSaveCallback(BaseCallback):
         return True
 
 if __name__ == "__main__":
-    EXP_NAME = "Exp_7_EgocentricNoDistanceReward"
-    base_dir = f"/home/nakos/Desktop/Εργασίες/Πτυχιακή/Snake/{EXP_NAME}"
+    EXP_NAME = "Exp_7_Egocentric_No_Distance_Reward"
+    base_dir = f"/PlaceHolderPath/{EXP_NAME}" # Replace the path to where you want the model to be saved
     log_dir = f"{base_dir}/tensorboard/"
     save_dir = f"{base_dir}/saved_models/"
     os.makedirs(save_dir, exist_ok=True)
@@ -154,7 +159,8 @@ if __name__ == "__main__":
     eval_callback = EvalCallback(eval_env, best_model_save_path=save_dir, log_path=save_dir, eval_freq=10000, n_eval_episodes=5, deterministic=True)
     milestone_callback = MilestoneSaveCallback(save_dir=save_dir, milestones=[400000, 800000, 1200000, 1600000, 2000000])
     
-    # Επειδή το reward είναι sparse, χρειαζόμαστε ΠΟΛΥ exploration (ent_coef=0.1) και μεγάλο δίκτυο
+    # The bigger Neural Network stays
+    # Because of the sparse rewards the AI is given a bigger ent_coef to explore more
     policy_kwargs = dict(net_arch=dict(pi=[256, 256], vf=[256, 256]))
     model = PPO("MlpPolicy", train_env, verbose=1, policy_kwargs=policy_kwargs, ent_coef=0.1)
     model.set_logger(new_logger)

@@ -1,7 +1,6 @@
 import pygame
 import sys
 import os
-import math
 import numpy as np
 from pygame.math import Vector2
 from stable_baselines3 import PPO
@@ -10,8 +9,7 @@ from gymnasium import spaces
 
 os.environ["OMP_NUM_THREADS"] = "1"
 
-# --- ΕΝΙΑΙΟ ΠΕΡΙΒΑΛΛΟΝ ΓΙΑ ΑΞΙΟΛΟΓΗΣΗ ---
-# Δέχεται παράμετρο "vision_mode" για να προσαρμόζεται στο εκάστοτε πείραμα.
+
 class EvaluatorSnakeEnv(gym.Env):
     metadata = {"render_modes": ["human"], "render_fps": 30}
 
@@ -24,7 +22,7 @@ class EvaluatorSnakeEnv(gym.Env):
         self.height = self.cell_number * self.cell_size
         self.action_space = spaces.Discrete(3)
         
-        # Ανάλογα το πείραμα, αλλάζει το μέγεθος της εισόδου
+        # The program sees what vision the experiment you want to run has, and adjusts things accordingly
         shape_size = 24 if vision_mode == "egocentric" else 28
         self.observation_space = spaces.Box(low=0.0, high=1.0, shape=(shape_size,), dtype=np.float32)
         
@@ -49,13 +47,12 @@ class EvaluatorSnakeEnv(gym.Env):
         head = self.snake_body[0]
         obs = []
         
-        # Λογική Όρασης ανάλογα το πείραμα
         if self.vision_mode == "absolute":
             directions = [
                 Vector2(0, -1), Vector2(1, -1), Vector2(1, 0), Vector2(1, 1), 
                 Vector2(0, 1), Vector2(-1, 1), Vector2(-1, 0), Vector2(-1, -1)
             ]
-        else: # Egocentric
+        else:
             clock_wise = [Vector2(0, -1), Vector2(1, 0), Vector2(0, 1), Vector2(-1, 0)]
             idx = clock_wise.index(self.snake_direction)
             f = clock_wise[idx]
@@ -76,7 +73,6 @@ class EvaluatorSnakeEnv(gym.Env):
             dist_wall = step
             obs.extend([1.0 / dist_wall, 1.0 / dist_apple if dist_apple > 0 else 0.0, 1.0 / dist_body if dist_body > 0 else 0.0])
             
-        # Προσθήκη κατεύθυνσης μόνο αν είναι απόλυτη όραση
         if self.vision_mode == "absolute":
             obs.extend([
                 1.0 if self.snake_direction == Vector2(0, -1) else 0.0,
@@ -114,7 +110,6 @@ class EvaluatorSnakeEnv(gym.Env):
 
         self.render()
         
-        # Χειρισμός για να μπορείς να κλείσεις το παράθυρο με το (X)
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
@@ -167,20 +162,17 @@ class EvaluatorSnakeEnv(gym.Env):
             pygame.quit()
             self.screen = None
 
-
-# --- ΛΟΓΙΚΗ ΜΕΝΟΥ ---
 if __name__ == "__main__":
-    BASE_DIR = "/home/nakos/Desktop/Εργασίες/Πτυχιακή/Snake"
+    BASE_DIR = "/Place_Holder_Path" # Repalace with the path that the models are saved at
     
-    # Λεξικό με τα ονόματα των φακέλων όπως τα έφτιαξαν τα scripts
     EXPERIMENTS = {
-        "1": {"name": "Exp_1_NoPenalty", "vision": "absolute"},
-        "2": {"name": "Exp_2_HighPenalty", "vision": "absolute"},
-        "3": {"name": "Exp_3_NoDistanceReward", "vision": "absolute"},
-        "4": {"name": "Exp_4_BiggerGammaBalancedRewards", "vision": "absolute"},
-        "5": {"name": "Exp_5_LowerPenalty", "vision": "absolute"},
+        "1": {"name": "Exp_1_Distance_Reward", "vision": "absolute"},
+        "2": {"name": "Exp_2_Distance_Reward_And_High_Penalty", "vision": "absolute"},
+        "3": {"name": "Exp_3_No_Distance_Reward_And_Higher_Penalty", "vision": "absolute"},
+        "4": {"name": "Exp_4_Bigger_Gamma_and_Balanced_Rewards", "vision": "absolute"},
+        "5": {"name": "Exp_5_Distance_Reward_and_Lower_Penalnty", "vision": "absolute"},
         "6": {"name": "Exp_6_Egocentric", "vision": "egocentric"},
-        "7": {"name": "Exp_7_EgocentricNoDistanceReward", "vision": "egocentric"}
+        "7": {"name": "Exp_7_Egocentric_No_Distance_Reward", "vision": "egocentric"}
     }
     
     CHECKPOINTS = {
@@ -191,34 +183,28 @@ if __name__ == "__main__":
         "5": "2000000",
     }
 
-    print("\n" + "="*50)
-    print(" 🐍 SNAKE AI - CONTROL ROOM 🐍 ")
-    print("="*50)
-    print("Επίλεξε Πείραμα για να τρέξεις:")
-    print("1. Χωρίς Penalty (Ταχύτατο αλλά κάνει Loops)")
-    print("2. Υψηλό Penalty (Βιαστικό / Αγχωμένο)")
-    print("3. Sparse Reward (Απόλυτη Όραση - Reward Hacking)")
-    print("4. Bigger Gamma (Φόβος του Μέλλοντος)")
-    print("5. Golden Absolute (Ισορροπημένο Απόλυτο, 228 Σκορ)")
-    print("6. Egocentric (Σχετική Όραση, 677 Σκορ)")
-    print("7. Egocentric Sparse (Το απόλυτο Tug of War)")
+    print("1. Distance Reward")
+    print("2. Distance Reward with High Penalnty")
+    print("3. No Distance Reward and Higher Penalnty")
+    print("4. Bigger Gamma and more Balanced Rewards")
+    print("5. Distance Reward with Lower Penalnty")
+    print("6. Egocentric")
+    print("7. Egocentric with No Distance Reward")
     print("="*50)
     
-    exp_choice = input("Πληκτρολόγησε τον αριθμό του πειράματος (1-7): ")
+    exp_choice = input("Choose the number of the experiment (1-7): ")
     if exp_choice not in EXPERIMENTS:
-        print("Λάθος επιλογή. Έξοδος...")
         sys.exit()
         
-    print("\nΕπίλεξε Checkpoint (Βήμα Εκπαίδευσης):")
     print("1. 400.000 Steps")
     print("2. 800.000 Steps")
     print("3. 1.200.000 Steps")
     print("4. 1.600.000 Steps")
     print("5. 2.000.000 Steps (Τελικό)")
-    print("6. Φόρτωση του 'best_model' (αν υπάρχει)")
+    print("6. Best Model")
     print("="*50)
     
-    ckpt_choice = input("Πληκτρολόγησε τον αριθμό (1-6): ")
+    ckpt_choice = input("Choose the number of the checkpoint (1-6): ")
     
     folder_name = EXPERIMENTS[exp_choice]["name"]
     vision_mode = EXPERIMENTS[exp_choice]["vision"]
@@ -228,23 +214,17 @@ if __name__ == "__main__":
     elif ckpt_choice in CHECKPOINTS:
         model_file = f"model_step_{CHECKPOINTS[ckpt_choice]}"
     else:
-        print("Λάθος επιλογή. Έξοδος...")
         sys.exit()
 
     model_path = os.path.join(BASE_DIR, folder_name, "saved_models", model_file)
     
     if not os.path.exists(model_path + ".zip"):
-        print(f"\n[ΣΦΑΛΜΑ] Το μοντέλο δεν βρέθηκε στη διαδρομή:\n{model_path}.zip")
-        print("Μήπως δεν έχει ολοκληρωθεί ακόμα η εκπαίδευση αυτού του checkpoint;")
+        print(f"\n[ERROR] The model was not found at:\n{model_path}.zip")
         sys.exit()
 
-    print(f"\nΦόρτωση μοντέλου: {folder_name} -> {model_file}...")
     env = EvaluatorSnakeEnv(vision_mode=vision_mode)
     model = PPO.load(model_path)
     
-    print("Το περιβάλλον ξεκινά! (Κλείσε το παράθυρο του παιχνιδιού για έξοδο)")
-    
-    # Ατέρμονο Loop για να παίζει συνεχόμενα
     while True:
         obs, _ = env.reset()
         terminated = False

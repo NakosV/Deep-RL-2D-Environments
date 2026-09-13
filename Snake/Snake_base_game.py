@@ -1,11 +1,7 @@
-# Turorial: https://www.youtube.com/watch?v=QFvqStqPCRU&t=3500s
-
 import pygame
 import sys
 from pygame.math import Vector2
 import random
-import os
-import csv
 
 pygame.init()
 cell_size = 40
@@ -14,9 +10,11 @@ clock = pygame.time.Clock()
 game_font = pygame.font.SysFont('Bauhaus 93', 60)
 fps = 60
 timer = 125 # miliseconds
+
 # visual
 shrink_amount = 5
 fruit_size = 24
+
 # colors
 snake_r = 175
 snake_g = 180
@@ -79,32 +77,8 @@ class MAIN():
         total_cells = cell_number * cell_number
         if len(self.snake.body) == total_cells:
             self.game_won = True
-        
-    def save_score_to_csv(self):
-        filename = "snake_game_csv.csv"
-        file_exists = os.path.isfile(filename)
-        try_num = 1
-        
-        # Αν υπάρχει ήδη, διαβάζουμε πόσες προσπάθειες έχουν γίνει
-        if file_exists:
-            with open(filename, 'r', encoding='utf-8') as f:
-                reader = csv.reader(f)
-                rows = [row for row in reader if row]
-                if len(rows) > 0:
-                    try_num = len(rows) # Επειδή η 1η γραμμή είναι το Header, το len = επόμενη προσπάθεια
-                    
-        # Υπολογισμός του σκορ (όπως γίνεται και στην draw_score)
-        current_score = len(self.snake.body) - 3
-        
-        # Προσθήκη του καινούριου σκορ
-        with open(filename, 'a', newline='', encoding='utf-8') as f:
-            writer = csv.writer(f)
-            if not file_exists or try_num == 1:
-                writer.writerow(["Try", "Score"]) # Δημιουργία Header αν είναι το 1ο game
-            writer.writerow([f"Try {try_num}", current_score])
 
     def game_over(self):
-        self.save_score_to_csv() # Αποθηκεύει το σκορ ΠΡΙΝ γίνει reset το φιδάκι
         self.snake.reset()
         
     def draw_score(self):
@@ -148,7 +122,6 @@ class SNAKE:
                     pygame.draw.rect(screen, (snake_r, snake_g, snake_b), connection_rect)
             
     def move_snake(self):
-        # ΔΙΟΡΘΩΣΗ: Αν το φίδι δεν έχει ξεκινήσει (ακίνητο), δεν εκτελείται η κίνηση ώστε να μην αυτο-συγκρούεται.
         if self.direction == Vector2(0, 0):
             return
 
@@ -158,8 +131,8 @@ class SNAKE:
             self.body = body_copy[:]
             self.new_block = False
         else:
-            body_copy = self.body[:-1] # copies the whole list (body) expept the last part
-            body_copy.insert(0, body_copy[0] + self.direction) # adding element to the front, the element is gonna be the first part of the body plus a player input
+            body_copy = self.body[:-1] # Copies the whole list (body) expept the last part
+            body_copy.insert(0, body_copy[0] + self.direction) # Adding element to the front, the element is gonna be the first part of the body plus a player input
             self.body = body_copy[:]
         self.can_turn = True
         
