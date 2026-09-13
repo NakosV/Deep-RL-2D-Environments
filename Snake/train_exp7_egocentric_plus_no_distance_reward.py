@@ -57,7 +57,6 @@ class AdvancedSnakeEnv(gym.Env):
         head = self.snake_body[0]
         obs = []
         
-        # Εγωκεντρική Όραση
         clock_wise = [Vector2(0, -1), Vector2(1, 0), Vector2(0, 1), Vector2(-1, 0)]
         idx = clock_wise.index(self.snake_direction)
         forward = clock_wise[idx]
